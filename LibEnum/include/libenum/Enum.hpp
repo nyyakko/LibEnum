@@ -2,6 +2,8 @@
 
 #include "Core.hpp"
 
+#include <string_view>
+
 #define ENUM_VALUE(NAME, VALUE)                                        \
 private:                                                               \
 class __##NAME##__##VALUE {                                            \
