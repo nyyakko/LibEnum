@@ -1,4 +1,4 @@
-set(TEST_NAME compiletime)
+set(TEST_NAME ${PROJECT_NAME}_compiletime)
 
 project(${TEST_NAME} LANGUAGES CXX)
 

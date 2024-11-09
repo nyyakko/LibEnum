@@ -4,24 +4,27 @@
 
 #include <string_view>
 
-#define ENUM_VALUE(NAME, VALUE)                                        \
-private:                                                               \
-class __##NAME##__##VALUE {                                            \
-public:                                                                \
-    static constexpr auto value = __COUNTER__ - BASE - 1;              \
-                                                                       \
-    constexpr operator size_t() const { return value; }                \
-    constexpr operator char const*() const { return #NAME"::"#VALUE; } \
-};                                                                     \
-public:                                                                \
+#define ENUM_VALUE(NAME, VALUE)                               \
+private:                                                      \
+class __##NAME##__##VALUE {                                   \
+public:                                                       \
+    static constexpr auto value = __COUNTER__ - BASE - 1;     \
+                                                              \
+    constexpr operator size_t() const { return value; }       \
+    constexpr operator char const*() const { return #VALUE; } \
+};                                                            \
+public:                                                       \
 static __##NAME##__##VALUE VALUE;
-
 #define ENUM_VALUES(NAME, ...) FOR_EACH(ENUM_VALUE, NAME __VA_OPT__(,) __VA_ARGS__)
+
+#define ENUM_VALUE_CONVERSION(NAME, VALUE) if (value == std::string_view(VALUE)) return NAME::VALUE;
+#define ENUM_VALUES_CONVERSION(NAME, ...) FOR_EACH(ENUM_VALUE_CONVERSION, NAME __VA_OPT__(,) __VA_ARGS__)
 
 #define ENUM_CLASS(NAME, ...)                                         \
 class NAME {                                                          \
     static constexpr auto BASE = __COUNTER__;                         \
 public:                                                               \
+    constexpr NAME() = default;                                       \
     constexpr NAME(auto value)                                        \
     {                                                                 \
         this->numeric = value;                                        \
@@ -32,8 +35,20 @@ public:                                                               \
                                                                       \
     constexpr operator size_t() const { return numeric; }             \
     constexpr operator char const*() const { return stringy.data(); } \
+                                                                      \
+    static constexpr NAME from_string(auto value)                     \
+    {                                                                 \
+        ENUM_VALUES_CONVERSION(NAME __VA_OPT__(,) __VA_ARGS__)        \
+        return {};                                                    \
+    }                                                                 \
+                                                                      \
+    constexpr bool operator==(NAME const& that) const                 \
+    {                                                                 \
+        return this->numeric == that.numeric;                         \
+    }                                                                 \
+                                                                      \
 private:                                                              \
     std::string_view stringy = #NAME"::INVALID";                      \
-    size_t numeric = 0;                                               \
+    size_t numeric = std::numeric_limits<size_t>::max();              \
 };
 

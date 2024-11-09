@@ -10,8 +10,11 @@ ENUM_CLASS(Test,
     C
 );
 
-static_assert(sv(::Test::A) == "Test::A", "Couldn't convert enum to string representation");
+static_assert(sv(::Test::A) == "A", "Couldn't convert enum to string representation");
 static_assert(::Test::A == 0, "Couldn't convert enum to numeric representation");
+
+static_assert(::Test::from_string("A") == ::Test::A);
+static_assert(::Test::from_string("C") != ::Test::A);
 
 TEST(compile_time, switch_cases)
 {
