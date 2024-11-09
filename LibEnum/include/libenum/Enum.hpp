@@ -14,7 +14,7 @@ public:                                                       \
     constexpr operator char const*() const { return #VALUE; } \
 };                                                            \
 public:                                                       \
-static __##NAME##__##VALUE VALUE;
+inline static __##NAME##__##VALUE VALUE;
 #define ENUM_VALUES(NAME, ...) FOR_EACH(ENUM_VALUE, NAME __VA_OPT__(,) __VA_ARGS__)
 
 #define ENUM_VALUE_CONVERSION(NAME, VALUE) if (value == std::string_view(VALUE)) return NAME::VALUE;
