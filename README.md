@@ -37,7 +37,7 @@ int main()
 
     static_assert(code.to_string() == std::string_view("OK"));
 
-    switch ()
+    switch (code)
     {
     case HttpError::BAD_REQUEST:
     case HttpError::NOT_FOUND:
