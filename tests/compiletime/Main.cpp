@@ -10,6 +10,7 @@ ENUM_CLASS(Test,
     C
 );
 
+static_assert(!::Test::is_convertible("E"), "This shouldn't be possible");
 static_assert(sv(::Test::A) == "A", "Couldn't convert enum to string representation");
 static_assert(::Test::A == 0, "Couldn't convert enum to numeric representation");
 
@@ -27,3 +28,4 @@ TEST(compile_time, switch_cases)
         };
     }(::Test::A);
 }
+

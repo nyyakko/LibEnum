@@ -20,6 +20,9 @@ inline static __##NAME##__##VALUE VALUE;
 #define ENUM_VALUE_CONVERSION(NAME, VALUE) if (value == std::string_view(VALUE)) return NAME::VALUE;
 #define ENUM_VALUES_CONVERSION(NAME, ...) FOR_EACH(ENUM_VALUE_CONVERSION, NAME __VA_OPT__(,) __VA_ARGS__)
 
+#define ENUM_VALUE_CONVERTIBLE(NAME, VALUE) if (value == std::string_view(VALUE)) return true;
+#define ENUM_VALUES_CONVERTIBLE(NAME, ...) FOR_EACH(ENUM_VALUE_CONVERTIBLE, NAME __VA_OPT__(,) __VA_ARGS__)
+
 #define ENUM_CLASS(NAME, ...)                                         \
 class NAME {                                                          \
     static constexpr auto BASE = __COUNTER__;                         \
@@ -40,6 +43,12 @@ public:                                                               \
     {                                                                 \
         ENUM_VALUES_CONVERSION(NAME __VA_OPT__(,) __VA_ARGS__)        \
         return {};                                                    \
+    }                                                                 \
+                                                                      \
+    static constexpr bool is_convertible(auto value)                  \
+    {                                                                 \
+        ENUM_VALUES_CONVERTIBLE(NAME __VA_OPT__(,) __VA_ARGS__)       \
+        return false;                                                 \
     }                                                                 \
                                                                       \
     constexpr bool operator==(NAME const& that) const                 \
