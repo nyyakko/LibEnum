@@ -2,6 +2,7 @@
 
 #include "Core.hpp"
 
+#include <limits>
 #include <string_view>
 
 #define ENUM_VALUE(NAME, VALUE)                               \
