@@ -12,12 +12,17 @@ ENUM_CLASS(Test,
 );
 
 static_assert(!::Test::is_convertible("E"), "This shouldn't be possible");
+static_assert(!::Test::is_convertible(-1), "This shouldn't be possible");
+
 static_assert(sv(::Test::A) == "A", "Couldn't convert enum to string representation");
 static_assert(::Test::A == 0, "Couldn't convert enum to numeric representation");
 static_assert(::Test::from_string("A").to_string() == sv("A"));
+static_assert(::Test::from_int(0) == ::Test::A);
 
 static_assert(::Test::from_string("A") == ::Test::A);
 static_assert(::Test::from_string("C") != ::Test::A);
+static_assert(::Test::from_int(0) == ::Test::A);
+static_assert(::Test::from_int(1) != ::Test::A);
 
 TEST(compile_time, switch_cases)
 {
