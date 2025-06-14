@@ -5,34 +5,110 @@
 
 using sv = std::string_view;
 
-ENUM_CLASS(Test,
+ENUM_CLASS(TestEnum,
     A,
     B,
-    C
+    C,
 );
 
-static_assert(!::Test::is_convertible("E"), "This shouldn't be possible");
-static_assert(!::Test::is_convertible(-1), "This shouldn't be possible");
+static_assert(!TestEnum::is_convertible("E"));
+static_assert(!TestEnum::is_convertible(-1));
 
-static_assert(sv(::Test::A) == "A", "Couldn't convert enum to string representation");
-static_assert(::Test::A == 0, "Couldn't convert enum to numeric representation");
-static_assert(::Test::from_string("A").to_string() == sv("A"));
-static_assert(::Test::from_int(0) == ::Test::A);
+static_assert(sv(TestEnum::A) == "A");
+static_assert("A" == sv(TestEnum::A));
 
-static_assert(::Test::from_string("A") == ::Test::A);
-static_assert(::Test::from_string("C") != ::Test::A);
-static_assert(::Test::from_int(0) == ::Test::A);
-static_assert(::Test::from_int(1) != ::Test::A);
+static_assert(TestEnum::from_string("A").to_string() == sv("A"));
+static_assert(sv("A") == TestEnum::from_string("A").to_string());
 
-TEST(compile_time, switch_cases)
-{
-    [] (::Test value) {
-        switch (value)
-        {
-        case ::Test::A:
-        case ::Test::B:
-        case ::Test::C: break;
+static_assert(TestEnum::A == 0);
+static_assert(0 == TestEnum::A);
+static_assert(TestEnum::from_int(0) == TestEnum::A);
+static_assert(TestEnum::A == TestEnum::from_int(0));
+static_assert(TestEnum::from_string("A") == TestEnum::from_string("A"));
+static_assert(TestEnum::from_string("A") == TestEnum::A);
+static_assert(TestEnum::A == TestEnum::from_string("A"));
+static_assert(TestEnum::A == TestEnum::A);
+
+static_assert(TestEnum::A != 1);
+static_assert(1 != TestEnum::A);
+static_assert(TestEnum::from_int(1) != TestEnum::A);
+static_assert(TestEnum::A != TestEnum::from_int(1));
+static_assert(TestEnum::from_string("A") != TestEnum::from_string("B"));
+static_assert(TestEnum::from_string("A") != TestEnum::B);
+static_assert(TestEnum::A != TestEnum::from_string("B"));
+static_assert(TestEnum::A != TestEnum::B);
+
+static_assert(TestEnum::B > 0);
+static_assert(1 > TestEnum::A);
+static_assert(TestEnum::from_string("B") > TestEnum::from_string("A"));
+static_assert(TestEnum::from_string("B") > TestEnum::A);
+static_assert(TestEnum::B > TestEnum::from_string("A"));
+static_assert(TestEnum::B > TestEnum::A);
+
+static_assert(TestEnum::A < 1);
+static_assert(0 < TestEnum::B);
+static_assert(TestEnum::from_string("A") < TestEnum::from_string("B"));
+static_assert(TestEnum::from_string("A") < TestEnum::B);
+static_assert(TestEnum::A < TestEnum::from_string("B"));
+static_assert(TestEnum::A < TestEnum::B);
+
+static_assert(TestEnum::A >= 0);
+static_assert(0 >= TestEnum::A);
+static_assert(TestEnum::from_string("A") >= TestEnum::from_string("A"));
+static_assert(TestEnum::from_string("A") >= TestEnum::A);
+static_assert(TestEnum::A >= TestEnum::from_string("A"));
+static_assert(TestEnum::A >= TestEnum::A);
+
+static_assert(TestEnum::B >= 0);
+static_assert(1 >= TestEnum::A);
+static_assert(TestEnum::from_string("B") >= TestEnum::from_string("A"));
+static_assert(TestEnum::from_string("B") >= TestEnum::A);
+static_assert(TestEnum::B >= TestEnum::from_string("A"));
+static_assert(TestEnum::B >= TestEnum::A);
+
+static_assert(TestEnum::A <= 0);
+static_assert(0 <= TestEnum::A);
+static_assert(TestEnum::from_string("A") <= TestEnum::from_string("A"));
+static_assert(TestEnum::from_string("A") <= TestEnum::A);
+static_assert(TestEnum::A <= TestEnum::from_string("A"));
+static_assert(TestEnum::A <= TestEnum::A);
+
+static_assert(TestEnum::A <= 1);
+static_assert(0 <= TestEnum::B);
+static_assert(TestEnum::from_string("A") <= TestEnum::from_string("B"));
+static_assert(TestEnum::from_string("A") <= TestEnum::B);
+static_assert(TestEnum::A <= TestEnum::from_string("B"));
+static_assert(TestEnum::A <= TestEnum::B);
+
+static_assert(
+    [] (TestEnum value) consteval -> TestEnum {
+        switch (value) {
+            case TestEnum::A: return TestEnum::A;
+            case TestEnum::B: return TestEnum::B;
+            case TestEnum::C: return TestEnum::C;
         };
-    }(::Test::A);
-}
+        return TestEnum{};
+    }
+(TestEnum::A) == TestEnum::A);
 
+static_assert(
+    [] (TestEnum value) consteval -> TestEnum {
+        switch (value) {
+            case TestEnum::A: return TestEnum::A;
+            case TestEnum::B: return TestEnum::B;
+            case TestEnum::C: return TestEnum::C;
+        };
+        return TestEnum{};
+    }
+(TestEnum::from_string("A")) == TestEnum::A);
+
+static_assert(
+    [] (TestEnum value) consteval -> TestEnum {
+        switch (value) {
+            case TestEnum::A: return TestEnum::A;
+            case TestEnum::B: return TestEnum::B;
+            case TestEnum::C: return TestEnum::C;
+        };
+        return TestEnum{};
+    }
+(TestEnum::from_int(0)) == TestEnum::A);
